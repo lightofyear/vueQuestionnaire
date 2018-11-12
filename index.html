@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    body,ul ,li,p{
+        margin:0;
+        padding: 0;
+    }
+    html,body{
+        width: 100%;
+        height: 100%;
+    }
+    body{
+        display: flex;
+    }
+    #box{
+        width: 80vw;
+        margin: 0 auto;
+    }
+    li{
+        list-style: none;
+    }
+    p.title{
+        padding: 2.5vh 0;
+    }
+    .option li{
+        padding: 1.25vw 2.5vw;
+    }
+    .option li div{
+        display: inline-flex;
+        width: 5vw;
+        height: 5vw;
+        vertical-align: bottom;
+        margin-right: 2.5vw;
+        border: 1px solid #cccccc;
+        border-radius:50% ;
+
+    }
+    .option li div i.op{
+        width: 2.5vw;
+        height: 2.5vw;
+        display: block;
+        margin: auto;
+        background: #aaa;
+        border-radius:50% ;
+    }
+</style>
+<body>
+    <div id="box">
+        <ul id="content">
+            <li v-for="(it,index) in list">
+                <p class="title"><i></i>{{index+1}}. {{it.msg}}</p>
+                <ul class="option">
+                    <li v-for="(item,key) in it.state " v-on:click="state_Change(it,index,key)">
+                        <div><i class="op" v-if="it.state[key]"></i></div>{{key}}
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        您还有  {{list.length-ntot}}  题未完成,您当前分数为  {{total}}分;
+    </div>
+</body>
+<script src="vue.js"></script>
+<script src="data.js"></script>
+<script>
+    let vue = new Vue(
+        {
+            el:'#box',
+            data :{
+                dataA : data,//模拟数据
+                list : [data[0]],
+                total: 0,//总分
+                ntot:0, // 计算 选项个数
+                numArr :[] //储存每个分数
+            },
+            methods:{
+                state_Change:function (it,index,key) {
+                    for (i in it.state ){
+                        it.state[i] = 0;
+                    }
+                    it.state[key] = 1;
+                    switch (key){
+                        case '是': it.num =3;
+                        break;
+                        case '不一定': it.num =2;
+                            break;
+                        case '否': it.num =1;
+                            break;
+                    }
+                    this.numArr[index] = it.num;
+                    this.total =0;
+                    this.ntot =0;
+                    for (i of this.numArr){
+                        if(i){
+                            i--;
+                            this.total += i;
+                            this.ntot ++;
+                        }
+                    }
+                    if(!it.display){//判断是否第一次点击
+                        if(this.dataA.length > index+1){//判断下一个资源是否存在
+                           this.list.push(this.dataA[index+1]);
+                        }
+                        it.display = !it.display;
+                    }
+
+                }
+            },
+        }
+    );
+</script>
+</html>
